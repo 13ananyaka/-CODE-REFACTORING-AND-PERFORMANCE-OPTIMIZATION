@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Note-Taking App</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: #f0f2f5;
+      color: #333;
+    }
+
+    header {
+      background: #1e3a5f;
+      padding: 1.5rem;
+      color: white;
+      text-align: center;
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .search-bar input {
+      flex: 1;
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+    }
+
+    .form {
+      background: white;
+      border-radius: 10px;
+      padding: 1rem;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      margin-bottom: 2rem;
+    }
+
+    .form input,
+    .form textarea {
+      width: 100%;
+      margin-bottom: 1rem;
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    .form button {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 50%;
+      font-size: 1.25rem;
+      cursor: pointer;
+    }
+
+    .notes-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .note-card {
+      background: #fff;
+      padding: 1rem;
+      border-radius: 10px;
+      width: 240px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      position: relative;
+    }
+
+    .note-card.yellow { background-color: #fff9c4; }
+    .note-card.green { background-color: #e0f2f1; }
+    .note-card.pink { background-color: #ffe0e0; }
+
+    .note-card h3 {
+      margin: 0 0 0.5rem;
+      font-size: 1.2rem;
+    }
+
+    .note-card .icons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .note-card .icons button {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+  <header>Note-Taking App</header>
+  <div class="container">
+    <div class="search-bar">
+      <input type="text" id="search" placeholder="Search notes...">
+    </div>
+
+    <div class="form">
+      <input type="text" id="title" placeholder="Title">
+      <textarea id="content" placeholder="Content"></textarea>
+      <button id="addBtn">+</button>
+    </div>
+
+    <div class="notes-grid" id="notesGrid"></div>
+  </div>
+
+  <script>
+    const titleInput = document.getElementById('title');
+    const contentInput = document.getElementById('content');
+    const notesGrid = document.getElementById('notesGrid');
+    const searchInput = document.getElementById('search');
+    const addBtn = document.getElementById('addBtn');
+
+    let notes = JSON.parse(localStorage.getItem('notes')) || [];
+
+    const colors = ['yellow', 'green', 'pink'];
+
+    function saveNotes() {
+      localStorage.setItem('notes', JSON.stringify(notes));
+    }
+
+    function createNoteHTML(note) {
+      const div = document.createElement('div');
+      div.className = `note-card ${note.color}`;
+      div.innerHTML = `
+        <h3>${note.title}</h3>
+        <p>${note.content}</p>
+        <div class="icons">
+          <button onclick="deleteNote(${note.id})">🗑️</button>
+        </div>
+      `;
+      return div;
+    }
+
+    function renderNotes(filter = '') {
+      notesGrid.innerHTML = '';
+      notes
+        .filter(note => note.title.toLowerCase().includes(filter.toLowerCase()) || note.content.toLowerCase().includes(filter.toLowerCase()))
+        .forEach(note => notesGrid.appendChild(createNoteHTML(note)));
+    }
+
+    function addNote() {
+      const title = titleInput.value.trim();
+      const content = contentInput.value.trim();
+      if (!title || !content) return;
+      const newNote = {
+        id: Date.now(),
+        title,
+        content,
+        color: colors[Math.floor(Math.random() * colors.length)]
+      };
+      notes.push(newNote);
+      saveNotes();
+      renderNotes();
+      titleInput.value = '';
+      contentInput.value = '';
+    }
+
+    function deleteNote(id) {
+      notes = notes.filter(n => n.id !== id);
+      saveNotes();
+      renderNotes();
+    }
+
+    addBtn.addEventListener('click', addNote);
+    searchInput.addEventListener('input', (e) => renderNotes(e.target.value));
+
+    renderNotes();
+  </script>
+</body>
+</html>
