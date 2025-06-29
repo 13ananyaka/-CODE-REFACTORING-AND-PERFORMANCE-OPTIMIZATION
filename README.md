@@ -91,3 +91,11 @@ The refactoring process successfully turned a basic note-taking app into a moder
 This type of optimization is essential in real-world software development, where developers often work with legacy code or collaborate on open-source projects. By demonstrating the ability to read, refactor, and enhance existing code, this project reflects strong problem-solving and engineering maturity.
 
 # OUTPUT #
+
+Before refactoring the app:
+
+![Image](https://github.com/user-attachments/assets/231176b8-9dbb-48b7-be86-6ffa748baf20)
+
+After refactoring the note taking app:
+
+![Image](https://github.com/user-attachments/assets/6720864d-678f-4e0f-9c66-b3b2315bc388)
